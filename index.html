@@ -219,7 +219,9 @@
       for (let i = 0; i < 80; i++) {
         await new Promise(r => setTimeout(r, 3000));
 
-        const pollRes = await fetch(`/api/poll?jobId=${jobId}`);
+        const pollRes = await fetch(`https://api.apiframe.ai/v2/jobs/${jobId}`, {
+ headers: { 'X-API-Key': 'afk_06640624c46df1f9ca3deee265bf58ba0f9c7d23' }
+});
 
         if (!pollRes.ok) continue;
         const job = await pollRes.json();
