@@ -1,600 +1,282 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000e9; -webkit-text-stroke: #0b36c6}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-    span.s2 {font-kerning: none; color: #0b36c6; -webkit-text-stroke: 0px #000000}
-    span.s3 {text-decoration: underline ; font-kerning: none; color: #0000e9; -webkit-text-stroke: 0px #0b36c6}
-    span.s4 {font: 12.0px 'Zapf Dingbats'; font-kerning: none}
-    span.s5 {font: 12.0px 'Apple Color Emoji'; font-kerning: none}
-    span.s6 {font: 12.0px 'Lucida Grande'; font-kerning: none}
-    span.s7 {text-decoration: underline ; font-kerning: none; color: #0b36c6; -webkit-text-stroke: 0px #0b36c6}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SongSpark — Génère ta chanson en 30 secondes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d0f; --surface: #16161a; --surface2: #1e1e24;
+      --border: #2a2a35; --gold: #c9a84c; --gold-light: #e8c96a;
+      --text: #f0ede8; --muted: #7a7a8a; --radius: 14px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    header { width: 100%; padding: 28px 32px 0; display: flex; align-items: center; justify-content: space-between; max-width: 780px; margin: 0 auto; }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--gold); }
+    .logo span { color: var(--text); }
+    .badge { font-size: 0.7rem; font-weight: 600; background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+    .hero { text-align: center; padding: 52px 24px 36px; max-width: 620px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3rem); font-weight: 900; line-height: 1.1; margin-bottom: 16px; }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; width: 100%; max-width: 680px; margin: 0 24px 40px; }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .field textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.95rem; padding: 14px 16px; resize: vertical; outline: none; transition: border-color 0.2s; min-height: 90px; }
+    .field textarea:focus { border-color: var(--gold); }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { cursor: pointer; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; color: var(--muted); transition: all 0.18s; user-select: none; }
+    .pill:hover { border-color: var(--gold); color: var(--gold-light); }
+    .pill.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold-light); font-weight: 600; }
+    .mood-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn-generate { width: 100%; margin-top: 8px; padding: 16px; background: linear-gradient(135deg, var(--gold) 0%, #a8732a 100%); border: none; border-radius: 10px; color: #0d0d0f; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+    .btn-generate:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    #loading { display: none; flex-direction: column; align-items: center; gap: 20px; padding: 32px 0 8px; }
+    .waveform { display: flex; align-items: flex-end; gap: 4px; height: 40px; }
+    .waveform span { width: 5px; background: var(--gold); border-radius: 3px; animation: wave 1.2s ease-in-out infinite; }
+    .waveform span:nth-child(1){animation-delay:0s} .waveform span:nth-child(2){animation-delay:.1s} .waveform span:nth-child(3){animation-delay:.2s} .waveform span:nth-child(4){animation-delay:.3s} .waveform span:nth-child(5){animation-delay:.4s} .waveform span:nth-child(6){animation-delay:.3s} .waveform span:nth-child(7){animation-delay:.2s}
+    @keyframes wave { 0%,100%{height:8px} 50%{height:36px} }
+    #loading p { color: var(--muted); font-size: 0.9rem; }
+    #loading strong { color: var(--gold); }
+    .progress-bar { width: 100%; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; width: 0%; transition: width 0.5s ease; }
+    #result { display: none; padding-top: 24px; }
+    .result-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; color: var(--gold-light); }
+    .result-meta { font-size: 0.78rem; color: var(--muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+    audio { width: 100%; border-radius: 8px; margin-bottom: 16px; accent-color: var(--gold); }
+    .lyrics-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-size: 0.88rem; line-height: 1.8; color: var(--muted); white-space: pre-wrap; max-height: 220px; overflow-y: auto; margin-bottom: 16px; }
+    .btn-new { width: 100%; padding: 13px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .btn-new:hover { border-color: var(--gold); color: var(--gold); }
+    #error { display: none; background: rgba(200,50,50,0.1); border: 1px solid rgba(200,50,50,0.3); border-radius: 10px; padding: 16px; color: #e07070; font-size: 0.88rem; margin-top: 16px; }
+    footer { color: var(--muted); font-size: 0.75rem; text-align: center; padding: 24px; line-height: 1.8; }
+    footer a { color: var(--gold); text-decoration: none; }
+    @media (max-width: 480px) { .card { padding: 20px; margin: 0 12px 32px; } .mood-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="fr"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;meta charset="UTF-8" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;title&gt;SongSpark — Génère ta chanson en 30 secondes&lt;/title&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space"> </span>&lt;link href="<a href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=Inter:wght@400;500;600&amp;display=swap"><span class="s3">https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=Inter:wght@400;500;600&amp;display=swap</span></a>" rel="stylesheet" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>:root {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--bg: #0d0d0f;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--surface: #16161a;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--surface2: #1e1e24;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--border: #2a2a35;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--gold: #c9a84c;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--gold-light: #e8c96a;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--text: #f0ede8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--muted: #7a7a8a;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>--radius: 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Inter', sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--text);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>min-height: 100vh;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>flex-direction: column;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Header ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>header {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 28px 32px 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>justify-content: space-between;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>max-width: 780px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin: 0 auto;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.logo {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 1.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 900;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>letter-spacing: -0.5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.logo span { color: var(--text); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.badge {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.7rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: rgba(201,168,76,0.15);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid rgba(201,168,76,0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 4px 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>letter-spacing: 0.05em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>text-transform: uppercase;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Hero ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.hero {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 52px 24px 36px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>max-width: 620px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.hero h1 {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: clamp(2rem, 6vw, 3rem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 900;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>line-height: 1.1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.hero h1 em {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.hero p {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>line-height: 1.6;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Card ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--surface);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: var(--radius);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 32px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>max-width: 680px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin: 0 24px 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field { margin-bottom: 20px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field label {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: block;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.8rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>letter-spacing: 0.06em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>text-transform: uppercase;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-bottom: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field textarea,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field input[type="text"] {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--surface2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--text);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Inter', sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.95rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 14px 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>resize: vertical;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>outline: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>transition: border-color 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field textarea:focus,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field input[type="text"]:focus {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-color: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.field textarea { min-height: 90px; }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* Style pills */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.pills {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>flex-wrap: wrap;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>gap: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.pill {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--surface2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 6px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.82rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>transition: all 0.18s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>user-select: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.pill:hover { border-color: var(--gold); color: var(--gold-light); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.pill.active {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: rgba(201,168,76,0.12);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-color: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--gold-light);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* Mood row */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.mood-row {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>grid-template-columns: 1fr 1fr;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>gap: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* Generate button */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.btn-generate {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-top: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: linear-gradient(135deg, var(--gold) 0%, #a8732a 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: #0d0d0f;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Inter', sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 700;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>transition: opacity 0.2s, transform 0.1s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>letter-spacing: 0.02em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.btn-generate:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Loading ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>#loading {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>flex-direction: column;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>gap: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 32px 0 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>align-items: flex-end;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>gap: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>height: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 3px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>animation: wave 1.2s ease-in-out infinite;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(1) { animation-delay: 0s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(2) { animation-delay: 0.1s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(3) { animation-delay: 0.2s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(4) { animation-delay: 0.3s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(5) { animation-delay: 0.4s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(6) { animation-delay: 0.3s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.waveform span:nth-child(7) { animation-delay: 0.2s; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>@keyframes wave {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>0%, 100% { height: 8px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>50% { height: 36px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>#loading p {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>#loading strong { color: var(--gold); }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* Progress bar */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.progress-bar {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>height: 3px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 2px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-top: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.progress-fill {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: linear-gradient(90deg, var(--gold), var(--gold-light));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 2px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 0%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>transition: width 0.5s ease;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Result ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>#result { display: none; padding-top: 24px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.result-title {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 1.3rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-weight: 700;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-bottom: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--gold-light);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.result-meta {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.78rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-bottom: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>text-transform: uppercase;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>letter-spacing: 0.05em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>audio {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>accent-color: var(--gold);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.lyrics-box {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--surface2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.88rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>line-height: 1.8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>white-space: pre-wrap;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>max-height: 220px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>overflow-y: auto;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.lyrics-box::-webkit-scrollbar { width: 4px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.lyrics-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.btn-new {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 13px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: transparent;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-family: 'Inter', sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.btn-new:hover { border-color: var(--gold); color: var(--gold); }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Error ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>#error {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>display: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: rgba(200, 50, 50, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border: 1px solid rgba(200,50,50,0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: #e07070;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.88rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin-top: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Divider ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>.divider {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>max-width: 680px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>height: 1px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>background: var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>margin: 0 24px 24px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>/* ── Footer ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>footer {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>color: var(--muted);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>font-size: 0.75rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>padding: 24px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>line-height: 1.8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>footer a { color: var(--gold); text-decoration: none; }</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>@media (max-width: 480px) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>.card { padding: 20px; margin: 0 12px 32px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>.mood-row { grid-template-columns: 1fr; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;header&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div class="logo"&gt;Song&lt;span&gt;Spark&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div class="badge"&gt;</span><span class="s4">✦</span><span class="s1"> Gratuit&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/header&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="hero"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;h1&gt;Ta chanson,&lt;br&gt;&lt;em&gt;en 30 secondes.&lt;/em&gt;&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;p&gt;Décris ce que tu ressens, choisis un style — l'IA compose, chante et produit pour toi.&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="card"&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div class="field"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;label&gt;De quoi parle ta chanson ?&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;textarea id="theme" placeholder="Ex : Une rupture amoureuse, un été inoubliable, la fierté d'avoir tout construit de ses mains…"&gt;&lt;/textarea&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div class="field"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;label&gt;Style musical&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="pills" id="style-pills"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill active" data-value="pop"&gt;Pop&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="r&amp;b"&gt;R&amp;B&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="hip-hop"&gt;Hip-Hop&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="rock"&gt;Rock&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="électro"&gt;Électro&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="soul"&gt;Soul&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="jazz"&gt;Jazz&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="reggaeton"&gt;Reggaeton&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="country"&gt;Country&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="variété française"&gt;Variété FR&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div class="field"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;label&gt;Ambiance&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="pills mood-row" id="mood-pills"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill active" data-value="mélancolique"&gt;</span><span class="s5">😔</span><span class="s1"> Mélancolique&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="euphorique"&gt;</span><span class="s5">🎉</span><span class="s1"> Euphorique&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="romantique"&gt;</span><span class="s5">❤️</span><span class="s1"> Romantique&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="puissant"&gt;</span><span class="s5">💪</span><span class="s1"> Puissant&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div class="field"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;label&gt;Langue des paroles&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="pills" id="lang-pills"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill active" data-value="French"&gt;Français&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="English"&gt;Anglais&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;div class="pill" data-value="Spanish"&gt;Espagnol&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;button class="btn-generate" id="btn-gen" onclick="generate()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span></span><span class="s4">✦</span><span class="s1"> Créer ma chanson</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/button&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;!-- Loading --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div id="loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="waveform"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;p&gt;L'IA compose ta chanson… &lt;strong id="loading-step"&gt;Écriture des paroles&lt;/strong&gt;&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="progress-bar"&gt;&lt;div class="progress-fill" id="progress"&gt;&lt;/div&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;!-- Error --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div id="error"&gt;&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;!-- Result --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;div id="result"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="result-title" id="song-title"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="result-meta" id="song-meta"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;audio id="audio-player" controls&gt;&lt;/audio&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;div class="lyrics-box" id="lyrics"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>&lt;button class="btn-new" onclick="reset()"&gt;</span><span class="s6">↩</span><span class="s1"> Créer une autre chanson&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="divider"&gt;&lt;/div&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;footer&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>Propulsé par l'IA · &lt;a href="#"&gt;Mentions légales&lt;/a&gt; · &lt;a href="#"&gt;Confidentialité&lt;/a&gt;&lt;br&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>SongSpark génère des chansons originales à usage personnel.</span></p>
-<p class="p1"><span class="s1">&lt;/footer&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>const API_KEY = 'atk_28df805fe43e62aa5731f1abcd6ef3dd1910af5a';</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>// Pills selection</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>function setupPills(groupId, multi = false) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const group = document.getElementById(groupId);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>group.querySelectorAll('.pill').forEach(pill =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>pill.addEventListener('click', () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>if (!multi) group.querySelectorAll('.pill').forEach(p =&gt; p.classList.remove('active'));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>pill.classList.toggle('active');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>setupPills('style-pills', false);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>setupPills('mood-pills', false);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>setupPills('lang-pills', false);</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>function getSelected(groupId) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const active = document.querySelectorAll(`#${groupId} .pill.active`);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>return Array.from(active).map(p =&gt; p.dataset.value).join(', ');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>let progressInterval;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>function animateProgress(targetPct, duration = 3000) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>clearInterval(progressInterval);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const fill = document.getElementById('progress');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>let current = parseFloat(fill.style.width) || 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const step = (targetPct - current) / (duration / 100);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>progressInterval = setInterval(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>current += step;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>if (current &gt;= targetPct) { current = targetPct; clearInterval(progressInterval); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>fill.style.width = current + '%';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}, 100);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>function setStep(text, pct) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('loading-step').textContent = text;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>animateProgress(pct);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>async function generate() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const theme = document.getElementById('theme').value.trim();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>if (!theme) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('theme').focus();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const style = getSelected('style-pills') || 'pop';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const mood = getSelected('mood-pills') || 'mélancolique';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const lang = getSelected('lang-pills') || 'French';</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const prompt = `${mood} ${style} song in ${lang} about: ${theme}`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>const tags = `${style}, ${mood}, vocals, catchy, ${lang}`;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>// UI state</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('btn-gen').disabled = true;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('loading').style.display = 'flex';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('result').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('error').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('progress').style.width = '0%';</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>setStep('Écriture des paroles…', 20);</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>try {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>// Step 1: Generate</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">     </span>const genRes = await fetch('<a href="https://api.apiframe.pro/music-generate"><span class="s3">https://api.apiframe.pro/music-generate</span></a>', {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>method: 'POST',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>headers: {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>'Content-Type': 'application/json',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>'Authorization': API_KEY</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>body: JSON.stringify({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>prompt: prompt,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>tags: tags,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>title: `Ma chanson – ${style}`,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>make_instrumental: false,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>model: 'V3_5'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>})</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>});</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>const genData = await genRes.json();</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>if (!genRes.ok || genData.error) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>throw new Error(genData.error || genData.message || 'Erreur lors de la génération.');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>const taskId = genData.task_id;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>if (!taskId) throw new Error('Réponse inattendue du serveur.');</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>setStep('Composition musicale…', 45);</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>// Step 2: Poll</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>let audio_url = null, title = null, lyric = null;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>let attempts = 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>const maxAttempts = 60;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>while (attempts &lt; maxAttempts) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>await new Promise(r =&gt; setTimeout(r, 5000));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>attempts++;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>const fetchRes = await fetch(`<a href="https://api.apiframe.pro/music-fetch%60"><span class="s7">https://api.apiframe.pro/music-fetch`</span></a>, {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>method: 'POST',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>headers: {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">           </span>'Content-Type': 'application/json',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">           </span>'Authorization': API_KEY</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>body: JSON.stringify({ task_id: taskId })</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>});</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>const fetchData = await fetchRes.json();</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>if (fetchData.status === 'failed') throw new Error('La génération a échoué. Réessaie.');</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>if (fetchData.status === 'finished' || fetchData.status === 'success') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>const songs = fetchData.songs || fetchData.output || [];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>if (songs.length &gt; 0) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">           </span>audio_url = songs[0].audio_url || songs[0].url;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">           </span>title = songs[0].title || 'Ma chanson';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">           </span>lyric = songs[0].lyric || songs[0].lyrics || '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">           </span>break;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">         </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>// Progress animation</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>const pct = Math.min(45 + (attempts / maxAttempts) * 45, 88);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>if (attempts &lt; 6) setStep('Composition musicale…', pct);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>else if (attempts &lt; 12) setStep('Enregistrement de la voix…', pct);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">       </span>else setStep('Mixage final…', pct);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>if (!audio_url) throw new Error('Délai dépassé. Réessaie dans quelques instants.');</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>setStep('Prête !', 100);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>await new Promise(r =&gt; setTimeout(r, 600));</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>// Show result</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('loading').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('result').style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('song-title').textContent = title;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('song-meta').textContent = `${style.toUpperCase()} · ${mood} · ${lang}`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('audio-player').src = audio_url;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('lyrics').textContent = lyric || '(Paroles non disponibles)';</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>} catch (err) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('loading').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>const errEl = document.getElementById('error');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>errEl.style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>errEl.textContent = '</span><span class="s5">⚠️</span><span class="s1"> ' + (err.message || 'Une erreur est survenue. Réessaie.');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">     </span>document.getElementById('btn-gen').disabled = false;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>}</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>function reset() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('result').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('error').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('btn-gen').disabled = false;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('theme').value = '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>document.getElementById('audio-player').src = '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">   </span>window.scrollTo({ top: 0, behavior: 'smooth' });</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>}</span></p>
-<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
-<p class="p3"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+
+<header>
+  <div class="logo">Song<span>Spark</span></div>
+  <div class="badge">✦ Gratuit</div>
+</header>
+
+<div class="hero">
+  <h1>Ta chanson,<br><em>en 30 secondes.</em></h1>
+  <p>Décris ce que tu ressens, choisis un style — l'IA compose, chante et produit pour toi.</p>
+</div>
+
+<div class="card">
+  <div class="field">
+    <label>De quoi parle ta chanson ?</label>
+    <textarea id="theme" placeholder="Ex : Un été inoubliable, la fierté d'avoir tout construit de ses mains, une rupture amoureuse…"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Style musical</label>
+    <div class="pills" id="style-pills">
+      <div class="pill active" data-value="pop">Pop</div>
+      <div class="pill" data-value="r&b">R&B</div>
+      <div class="pill" data-value="hip-hop">Hip-Hop</div>
+      <div class="pill" data-value="rock">Rock</div>
+      <div class="pill" data-value="electro">Électro</div>
+      <div class="pill" data-value="soul">Soul</div>
+      <div class="pill" data-value="jazz">Jazz</div>
+      <div class="pill" data-value="reggaeton">Reggaeton</div>
+      <div class="pill" data-value="country">Country</div>
+      <div class="pill" data-value="variete francaise">Variété FR</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Ambiance</label>
+    <div class="pills mood-row" id="mood-pills">
+      <div class="pill active" data-value="melancholic">😔 Mélancolique</div>
+      <div class="pill" data-value="euphoric">🎉 Euphorique</div>
+      <div class="pill" data-value="romantic">❤️ Romantique</div>
+      <div class="pill" data-value="powerful">💪 Puissant</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Langue des paroles</label>
+    <div class="pills" id="lang-pills">
+      <div class="pill active" data-value="French">Français</div>
+      <div class="pill" data-value="English">Anglais</div>
+      <div class="pill" data-value="Spanish">Espagnol</div>
+    </div>
+  </div>
+
+  <button class="btn-generate" id="btn-gen" onclick="generate()">✦ Créer ma chanson</button>
+
+  <div id="loading">
+    <div class="waveform">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p>L'IA compose ta chanson… <strong id="loading-step">Écriture des paroles</strong></p>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  </div>
+
+  <div id="error"></div>
+
+  <div id="result">
+    <div class="result-title" id="song-title"></div>
+    <div class="result-meta" id="song-meta"></div>
+    <audio id="audio-player" controls></audio>
+    <div class="lyrics-box" id="lyrics"></div>
+    <button class="btn-new" onclick="reset()">↩ Créer une autre chanson</button>
+  </div>
+</div>
+
+<footer>Propulsé par l'IA · <a href="#">Mentions légales</a> · <a href="#">Confidentialité</a><br>SongSpark génère des chansons originales à usage personnel.</footer>
+
+<script>
+  const API_KEY = 'afk_06640624c46df1f9ca3deee265bf58ba0f9c7d23';
+  const BASE = 'https://api.apiframe.ai';
+
+  function setupPills(groupId) {
+    document.getElementById(groupId).querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.getElementById(groupId).querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+  }
+  setupPills('style-pills');
+  setupPills('mood-pills');
+  setupPills('lang-pills');
+
+  function getSelected(groupId) {
+    const active = document.querySelector(`#${groupId} .pill.active`);
+    return active ? active.dataset.value : '';
+  }
+
+  let progressInterval;
+  function animateProgress(target, duration = 4000) {
+    clearInterval(progressInterval);
+    const fill = document.getElementById('progress');
+    let cur = parseFloat(fill.style.width) || 0;
+    const step = (target - cur) / (duration / 100);
+    progressInterval = setInterval(() => {
+      cur += step;
+      if (cur >= target) { cur = target; clearInterval(progressInterval); }
+      fill.style.width = cur + '%';
+    }, 100);
+  }
+  function setStep(text, pct) {
+    document.getElementById('loading-step').textContent = text;
+    animateProgress(pct);
+  }
+
+  async function generate() {
+    const theme = document.getElementById('theme').value.trim();
+    if (!theme) { document.getElementById('theme').focus(); return; }
+
+    const style = getSelected('style-pills') || 'pop';
+    const mood  = getSelected('mood-pills')  || 'melancholic';
+    const lang  = getSelected('lang-pills')  || 'French';
+
+    const prompt = `A ${mood} ${style} song in ${lang} about: ${theme}`;
+
+    document.getElementById('btn-gen').disabled = true;
+    document.getElementById('loading').style.display = 'flex';
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('progress').style.width = '0%';
+    setStep('Écriture des paroles…', 15);
+
+    try {
+      // — v2 : POST /v2/music/generate —
+      const genRes = await fetch(`${BASE}/v2/music/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY
+        },
+        body: JSON.stringify({
+          model: 'suno',
+          prompt: prompt,
+          sunoParams: {
+            custom_mode: false,
+            instrumental: false,
+            model_version: 'V3_5'
+          }
+        })
+      });
+
+      if (!genRes.ok) {
+        const txt = await genRes.text();
+        throw new Error(`Erreur serveur (${genRes.status}): ${txt.slice(0, 300)}`);
+      }
+
+      const genData = await genRes.json();
+      const jobId = genData.jobId;
+      if (!jobId) throw new Error('Pas de jobId reçu. Vérifie ta clé API.');
+
+      setStep('Composition musicale…', 35);
+
+      // — Poll GET /v2/jobs/{jobId} —
+      let audioUrl = null, title = 'Ma chanson', lyric = '';
+      for (let i = 0; i < 60; i++) {
+        await new Promise(r => setTimeout(r, 5000));
+
+        const pollRes = await fetch(`${BASE}/v2/jobs/${jobId}`, {
+          headers: { 'X-API-Key': API_KEY }
+        });
+
+        if (!pollRes.ok) continue;
+        const job = await pollRes.json();
+
+        if (job.status === 'FAILED') throw new Error('Génération échouée. Réessaie.');
+
+        if (job.status === 'COMPLETED') {
+          const tracks = job.result?.tracks || [];
+          if (tracks.length > 0) {
+            audioUrl = tracks[0].audio_url || tracks[0].url;
+            title    = tracks[0].title || 'Ma chanson';
+            lyric    = tracks[0].lyrics || tracks[0].lyric || '';
+          }
+          break;
+        }
+
+        const pct = Math.min(35 + (i / 60) * 55, 90);
+        if (i < 5)       setStep('Composition musicale…', pct);
+        else if (i < 15) setStep('Enregistrement de la voix…', pct);
+        else             setStep('Mixage final…', pct);
+      }
+
+      if (!audioUrl) throw new Error('Délai dépassé — réessaie dans quelques instants.');
+
+      setStep('Prête !', 100);
+      await new Promise(r => setTimeout(r, 500));
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('song-title').textContent = title;
+      document.getElementById('song-meta').textContent  = `${style.toUpperCase()} · ${mood} · ${lang}`;
+      document.getElementById('audio-player').src = audioUrl;
+      document.getElementById('lyrics').textContent = lyric || '(Paroles non disponibles)';
+
+    } catch (err) {
+      clearInterval(progressInterval);
+      document.getElementById('loading').style.display = 'none';
+      const el = document.getElementById('error');
+      el.style.display = 'block';
+      el.textContent = '⚠️ ' + (err.message || 'Une erreur est survenue.');
+      document.getElementById('btn-gen').disabled = false;
+    }
+  }
+
+  function reset() {
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('btn-gen').disabled = false;
+    document.getElementById('theme').value = '';
+    document.getElementById('audio-player').src = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
 </body>
 </html>
