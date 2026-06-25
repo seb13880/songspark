@@ -1,1 +1,10 @@
-{}
+{
+  "functions": {
+    "api/poll.js": {
+      "maxDuration": 60
+    },
+    "api/generate.js": {
+      "maxDuration": 60
+    }
+  }
+}
