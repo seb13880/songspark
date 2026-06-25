@@ -216,7 +216,7 @@
 
       // — Poll GET /v2/jobs/{jobId} —
       let audioUrl = null, title = 'Ma chanson', lyric = '';
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i < 80; i++) {
         await new Promise(r => setTimeout(r, 3000));
 
         const pollRes = await fetch(`/api/poll?jobId=${jobId}`);
