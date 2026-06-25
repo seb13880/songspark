@@ -133,8 +133,8 @@
 <footer>Propulsé par l'IA · <a href="#">Mentions légales</a> · <a href="#">Confidentialité</a><br>SongSpark génère des chansons originales à usage personnel.</footer>
 
 <script>
-  const API_KEY = 'afk_06640624c46df1f9ca3deee265bf58ba0f9c7d23';
-  const BASE = 'https://api.apiframe.ai';
+  
+  
 
   function setupPills(groupId) {
     document.getElementById(groupId).querySelectorAll('.pill').forEach(pill => {
@@ -188,13 +188,10 @@
     setStep('Écriture des paroles…', 15);
 
     try {
-      // — v2 : POST /v2/music/generate —
-      const genRes = await fetch(`${BASE}/v2/music/generate`, {
+      // — Generate via Vercel proxy —
+      const genRes = await fetch('/api/generate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': API_KEY
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'suno',
           prompt: prompt,
@@ -222,9 +219,7 @@
       for (let i = 0; i < 60; i++) {
         await new Promise(r => setTimeout(r, 5000));
 
-        const pollRes = await fetch(`${BASE}/v2/jobs/${jobId}`, {
-          headers: { 'X-API-Key': API_KEY }
-        });
+        const pollRes = await fetch(`/api/poll?jobId=${jobId}`);
 
         if (!pollRes.ok) continue;
         const job = await pollRes.json();
